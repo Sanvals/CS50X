@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link href="styles.css" rel="stylesheet">
+        <title>Trivia!</title>
+        <script>
+            // TODO: Add code to check answers to questions
+            // 2. Using JavaScript, add logic so that the buttons change colors when clicked
+            // 2.1. On incorrect answer, button turns red and a text appears underneath saying "Incorrect"
+            // 2.2. On correct answer button turns green and text appears unterneath saying "Correct!"
+
+            // Let's set up the listener
+            document.addEventListener("DOMContentLoaded", function() {
+
+                // And create the variables for each scenario
+                var correct = document.querySelector("#correct");
+                var incorrect = document.querySelectorAll(".incorrect");
+                var message = document.querySelector("#message");
+
+                // Create the function for the correct button
+                correct.addEventListener('click', function(){
+                    correct.style.backgroundColor = "green";
+                    message.innerHTML = "Correct!";
+                });
+
+                // Create the function for the incorrect button
+                for (let i = 0; i < incorrect.length; i++){
+                    incorrect[i].addEventListener('click', function(){
+                        incorrect[i].style.backgroundColor = "red";
+                        message.innerHTML = "Incorrect";
+                    });
+                };
+
+                // 4. Using JavaScript, ad logic so the field changes color when confirmed
+                // 4.1. If the answer is incorrect, the text field turns red and an "Incorrect" appears
+                // 4.2. If the answer is correct, the text field turns green and a "Correct" appears.
+
+                // We crate first the function to listen
+                document.querySelector("#try").addEventListener('click', function(){
+                    // And then variables to gather the results
+                    let send = document.querySelector("#input");
+                    let comment = document.querySelector("#text2");
+
+                    // And compare the falue of the imput against the solution
+                    if (answer.value == "yes" || answer.value == "Yes" || answer.value == "YES") {
+                        answer.style.color = "green";
+                        comment.innerHTML = "Correct!";
+                    } else {
+                        answer.style.color = "red";
+                        comment.innerHTML = "Incorrect";
+                    }
+                })
+            });
+
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Trivia!</h1>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <h2>Part 1: Multiple Choice </h2>
+                <hr>
+                <!-- TODO: Add multiple choice question here -->
+                <!-- 1.1. Use an h3 heading for the text of your question -->
+                <!-- 1.2. Have at least three buttons for each answer, onle one correct -->
+                <h3>What is the name of the protagonist of John Wick?</h3>
+                <div id="message"></div>
+                <button class="incorrect">Brad Pitt</button>
+                <button id="correct">Antonio Banderas</button>
+                <button class="incorrect">Keanu Reeves</button>
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Free Response</h2>
+                <hr>
+                <!-- TODO: Add free response question here -->
+                <!-- 3. Add beneath Part 2 a text-based free response -->
+                <!-- 3.1. You should use an h3 heading for the text of your question -->
+                <!-- 3.2. You should use an input field to let the user type -->
+                <!-- 3.3. You should use a button to let the user confirm their answer -->
+                <h3>Was there a giant duck behind Maland during the Week 8 class?</h3>
+                <div id="text2"></div>
+                <input type="text" id="answer">
+                <button id="try">Send</button>
+            </div>
+        </div>
+    </body>
+</html>

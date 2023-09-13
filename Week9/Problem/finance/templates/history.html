@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+    <table class="table" style="width:100%">
+        <thead class="table-light">
+        <tr>
+            <th>Symbol</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Action</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in data %}
+        <tr>
+            <td>{{ i["symbol"] }}</td>
+            <td>{{ i["qty"] }}</td>
+            <td>{{ i["price"] | usd }}</td>
+            <td>{{ i["action"] }}</td>
+            <td>{{ i["time"] }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+
+        </tfoot>
+    </table>
+{% endblock %}

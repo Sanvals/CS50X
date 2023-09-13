@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+    <table class="table" style="width:100%">
+        <thead class="table-light">
+            <tr>
+                <th>Share</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Held</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in diff %}
+        <tr>
+            <td>{{ i["symbol"] }}</td>
+            <td>{{ i["qty"] }}</td>
+            <td>{{ i["price"] | usd }}</td>
+            <td>{{ (i["price"] * i["qty"]) | usd }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td><b><div style="text-align:right">CASH</div></b></td>
+            <td>{{ balance | usd}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td><b><div style="text-align:right">TOTAL</div></b></td>
+            <td>{{ total | usd}}</td>
+        </tr>
+        </tfoot>
+    </table>
+{% endblock %}
