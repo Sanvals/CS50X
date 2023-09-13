@@ -1,0 +1,11 @@
+sort1 uses: Bubble Sort
+
+How do you know?: it performs better than the other one sort program
+
+sort2 uses: Merge Sort
+
+How do you know?: it takes the shortest time to sort random numbers
+
+sort3 uses: Selection Sort
+
+How do you know?: it takes the longes to study an already sorted list
