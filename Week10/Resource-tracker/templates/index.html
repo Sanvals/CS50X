@@ -1,0 +1,282 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<!--- Make a SCRIPT to react to the button interactions --->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // When the document is loaded
+    $(document).ready(function() {
+        // Method to delete one food item from the same page
+        $(".custom-btndel").click(function() {
+            // Extract its name
+            var item = $(this).attr("id").split("_")[1];
+
+            // Make an AJAX request to send it to FLASK
+            $.ajax({
+                type: "POST",
+                url: "/delete",
+                data: {
+                    item: item
+                },
+                success: function(response) {
+                    // Rrefresh this same page after completion
+                    location.reload();
+                }
+            })
+        })
+
+        // Method to add one food item from the same page
+        $(".custom-btnadd").click(function() {
+            //Extract its name
+            var item = $(this).attr("id").split("_")[1];
+
+            // Maje an AJAX request to send it to FLASK
+            $.ajax({
+                type: "POST",
+                url: "/onemore",
+                data: {
+                    item: item
+                },
+                success: function(response) {
+                    // Refresh the page
+                    location.reload();
+                }
+            })
+        });
+
+        // Method to subtract one food item from the same page
+        $(".custom-btnmin").click(function() {
+            //Extract its name
+            var item = $(this).attr("id").split("_")[1];
+
+            // Maje an AJAX request to send it to FLASK
+            $.ajax({
+                type: "POST",
+                url: "/oneless",
+                data: {
+                    item: item
+                },
+                success: function(response) {
+                    // Refresh the page
+                    location.reload();
+                }
+            })
+        });
+
+        // Method to delete an item from the same page
+        $(".custom-btnitemdel").click(function() {
+            //Extract its name
+            var item = $(this).attr("id").split("_")[1];
+
+            // Maje an AJAX request to send it to FLASK
+            $.ajax({
+                type: "POST",
+                url: "/delitem",
+                data: {
+                    item: item
+                },
+                success: function(response) {
+                    // Refresh the page
+                    location.reload();
+                }
+            })
+        });
+
+        // -- MODIFY ITEM SECTION
+        // Method to modify an item from the same page
+        $(".custom-btnitemmod").click(function() {
+            // First, extract the item ID
+            var itemId = $(this).attr("id").split("_")[1];
+
+            // Next, extract the previous description
+            var descPrev = $("#item-description_" + itemId).text().trim();
+
+            // Now, create a new input element
+            var descInput = $("<textarea class='form-control mx-auto' autocomplete='off' id='itemDescInput_" + itemId + "'>");
+            descInput.val(descPrev);
+
+            // Empty the div with the description
+            var element = $("#item-description_" + itemId)
+            element.empty()
+
+            // Now, we create the quantity imput
+            var qtyInput = $("<input class='form-control mx-auto custom-input' id='itemQtyInput_" + itemId + "' type='number' value='1' min='1' max='100' size='1' style='height: 38px; width: 60px'>")
+
+            // And append the items inside it
+            element.append(qtyInput);
+            element.append(descInput);
+
+
+            // Change the "modify" for an "accept" button
+            var modButton = $(this);
+            modButton.text("accept");
+            modButton.removeClass("btn-outline-warning custom-btnitemmod");
+            modButton.addClass("btn-outline-success custom-btnitemaccept");
+
+            // Also, disable the "delete" button
+            var delButton = document.getElementById("btnitemdel_" + itemId);
+            console.log(delButton);
+            delButton.setAttribute('disabled', true);
+
+            // Create the function when clicking on "Accept"
+            modButton.click(function() {
+                var newDesc = descInput.val().trim();
+                var newQty = qtyInput.val();
+
+                // Send the information via AJAX request
+                $.ajax({
+                    type: "POST",
+                    url: "/moditem",
+                    data: {
+                        id: itemId,
+                        desc: newDesc,
+                        qty: newQty
+                    },
+                    success: function(response) {
+                        location.reload();
+                    }
+                })
+            })
+        })
+    });
+</script>
+<!--- Rest of the HTML --->
+<h4>-- Coins --</h4>
+<!-- COINS SECTION -->
+<table class="table table-sm table-borderless" style="width: 15rem; margin-left: auto; margin-right: auto; margin-bottom: 0px">
+    <tr>
+        {% for i in coins %}
+        <td>{{ i[1] }}{{ i[0] }}c</td>
+        {% endfor %}
+    </tr>
+</table>
+<table class="table table-sm table-borderless" style="width: 20rem; margin-left: auto; margin-right: auto;">
+    <tr>
+        <form action="/coin" method="post">
+            <td>
+                <button class="btn btn-outline-success btn-sm custom-btn" style="custom-btn" type="submit">Update</button>
+            </td>
+            <td>
+                <input class="form-control mx-auto custom-input" id="coinsQty" name="coinsQty" placeholder="1" type="number" value="1" min="1" max="100" size="3" style="height: 30px;">
+            </td>
+            <td>
+                <select class="form-select form-select-sm" aria-label=".form-select-:sm example" name="coinsValue" id="coinsValue" style="height: 30px; width: 60px;">
+                    {% for i in coins %}
+                    <option value="{{ i[0] }}">{{ i[0] }}c</option>
+                    {% endfor %}
+            </td>
+            <td>
+                <select class="form-select form-select-sm" aria-label=".form-select-:sm example" name="coinsAct" id="coinsAct" style="height: 30px; width: 90px">
+                    <option value="earn">Earn</option>
+                    <option value="spend">Spend</option>
+            </td>
+        </form>
+    </tr>
+</table>
+<!-- FOOD SECTION -->
+<h4>-- Food --</h2>
+    <table class="table table-striped table-sm" style="width: 25rem; margin-left: auto; margin-right: auto;">
+        <thead>
+            <tr>
+                <th style="width: 6rem;"></th>
+                <th style="width: 10rem;">Item</th>
+                <th style="width: 4rem;">Qty</th>
+                <th style="width: 4rem;">Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for i in rows %}
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-outline-primary btn-sm custom-btnadd" style="custom-btn" id="btnadd_{{ i['name']}}">+</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm custom-btndel" style="custom-btn" id="btndel_{{ i['name']}}">x</button>
+                    <button type="button" class="btn btn-outline-warning btn-sm custom-btnmin" style="custom-btn" id="btnmin_{{ i['name']}}">-</button>
+                </td>
+                <td class="item-name">{{ i["name"].title() }}</td>
+                <td>{{ i["qty"] }} uds</td>
+                <td>{{ i["duration"] }} days</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <form action="/add" method="post">
+                <tr>
+                    <td><button class="btn btn-outline-success btn-sm custom-btn" style="custom-btn" type="submit">Add</button></td>
+                    <td><input class="form-control mx-auto" autocomplete="off" id="newTxt" name="newTxt" placeholder="Food item" type="text"></td>
+                    <td><input class="form-control mx-auto custom-input" id="newQty" name="newQty" placeholder="1" type="number" value="1" min="1" max="100" size="1" style="height: 38px;"></td>
+                    <td><input class="form-control mx-auto custom-input" id="newDur" name="newDur" placeholder="1" type="number" value="1" min="1" max="100" size="1" style="height: 38px;"></td>
+                </tr>
+            </form>
+        </tfoot>
+    </table>
+
+    <!-- ITEMS -->
+    <h4>-- Items --</h4>
+    {% for category in groups %}
+    <button type="button" class="btn" disabled style="border-color: transparent !important; outline: none !important; position: relative;">
+        {{ category["type"].capitalize() }}s
+        <span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-light text-bg-light">
+            {{ category["COUNT(*)"]}}
+        </span>
+    </button>
+    {% for i in items %}
+    {% if i["type"] == category["type"] %}
+    <table class="table table-sm table-borderless" style="width: 25rem; margin-left: auto; margin-right: auto; margin-bottom: 0px; padding: 0px;">
+        <tr>
+            <td style="text-align: left; padding: 0rem;">
+                <button style="padding: 0px; margin: 0px;" class="btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ i['id'] | string }}">
+                    {{ i["qty"] }} x {{ i["name"] | title }}
+                </button>
+                <div class="collapse" id="collapse_{{ i['id'] | string }}">
+                    <div class="card card-body">
+                        <div id="item-description_{{ i['id'] | string }}" class="d-flex align-items-center">
+                            {{ i["desc"] }}
+                        </div>
+                        <div id="item-actions_{{ i['id'] | string }}">
+                            <div class="d-grip gap-2 d-md-block">
+
+                                <button type="button" class="btn btn-sm btn-outline-warning custom-btnitemmod" style="custom-btnmoditem" id="btnitemmod_{{ i['id'] | string }}">
+                                    modify
+                                </button>
+
+                                <button type="button" class="btn btn-sm btn-outline-danger custom-btnitemdel" style="custom-btndelitem" id="btnitemdel_{{ i['id'] | string }}">
+                                    delete
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    {% endfor %}
+    <br>
+    <table class="table table-sm table-borderless" style="width: 25rem; margin-left: auto; margin-right: auto; margin-bottom: 0px; padding: 0px;">
+        <tr>
+            <form action="/additem" method="post">
+                <td style="width: 25rem; display: flex;">
+                    <button class="btn btn-outline-success btn-sm custom-btn" style="custom-btn" type="submit">Add</button>
+                    <div style="display:flex;">
+                        <input class="form-control mx-auto custom-input" id="itemQty" name="itemQty" placeholder="1" type="number" value="1" min="1" max="100" size="1" style="height: 38px; width: 60px;">
+                        <input class="form-control mx-auto" autocomplete="off" id="itemName" name="itemName" placeholder="Item name" type="text">
+                        <select class="form-select form-select-sm" aria-label=".form-select-:sm example" name="itemType" id="itemType" style="height: 38px; width: 90px">
+                            <option value="potion">potion</option>
+                            <option value="weapon">weapon</option>
+                            <option value="armor">armor</option>
+                            <option value="ring">ring</option>
+                            <option value="scroll">scroll</option>
+                    </div>
+                </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="form-control mx-auto" autocomplete="off" id="itemDesc" name="itemDesc" placeholder="Item description" type="text">
+            </td>
+        </tr>
+        </form>
+    </table>
+    {% endblock %}
